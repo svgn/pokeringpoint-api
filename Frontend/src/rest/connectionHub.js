@@ -5,47 +5,60 @@ class ConnectionHub {
   constructor() {
     this.connection = new signalR.HubConnectionBuilder()
       .withUrl(`${RestConfig.url}/lobbyHub`)
+      .withAutomaticReconnect([])
       .build();
-    this.start();
+
+    this.startPromise = this.start();
   }
 
-  start() {
+  async start() {
     try {
-      this.connection.start({ withCredentials: false });
+        return await this.connection.start();
     } catch (err) {
-      console.log(err);
+        console.log(err);
+    }
+  }
+
+  async ensureConnectionStarted() {
+    if (!this.connection.connectionStarted) {
+      await this.startPromise;
     }
   }
 
   subscribeForUpdateLobby(lobbyHub, cb) {
     this.connection.on("UpdateLobby", (lobby) => {
        cb(lobby);
-       console.log(lobby);
     });
   }
+
   subscribeForJoinLobby(cb) {
     this.connection.on("JoinLobby", (user) => {
       	cb(user);
       });
   }
 
-  joinLobby(lobbyId, userName, userType) {
+  async joinLobby(lobbyId, userName, userType) {
+    await this.ensureConnectionStarted();
     this.connection.invoke("JoinLobby", lobbyId, userName, userType);
   }
 
-  vote(lobbyId, cardId) {
+  async vote(lobbyId, cardId) {
+    await this.ensureConnectionStarted();
     this.connection.invoke("Vote", lobbyId, cardId);
   }
 
-  clearVote(lobbyId) {
+  async clearVote(lobbyId) {
+    await this.ensureConnectionStarted();
     this.connection.invoke("ClearVote", lobbyId);
   }
 
-  leaveLobby(lobbyId) {
+  async leaveLobby(lobbyId) {
+    await this.ensureConnectionStarted();
     this.connection.invoke("LeaveLobby", lobbyId);
   }
 
-  showVote(lobbyId) {
+  async showVote(lobbyId) {
+    await this.ensureConnectionStarted();
     this.connection.invoke("ShowVote", lobbyId);
   }
 }

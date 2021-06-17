@@ -1,18 +1,16 @@
-class LocalStorageService {
-    constuctor() {
-        this.userKey = 'logged-user';
-    }
+const USERKEY = 'logged-user';
 
+class LocalStorageService {
     setLoggedUser(user) {
-        localStorage.setItem(this.userKey, JSON.stringify(user));
+        localStorage.setItem(USERKEY, JSON.stringify(user));
     }
 
     getLoggedUser() {
-        return JSON.parse(localStorage.getItem(this.userKey));
+        return JSON.parse(localStorage.getItem(USERKEY));
     }
 
     clearLoggedUser() {
-        localStorage.removeItem(this.userKey);
+        localStorage.removeItem(USERKEY);
     }
 }
 

@@ -1,8 +1,6 @@
 @import './login/Login.css';
-@import './home/home.css';
 
 .App {
-    width: 50%;
-    height: 50%;
-    margin: auto;
+    max-width: 80%;
+    margin: 0 auto;
 }
