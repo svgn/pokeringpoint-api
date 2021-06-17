@@ -20,11 +20,12 @@ class ConnectionHub {
   subscribeForUpdateLobby(lobbyHub, cb) {
     this.connection.on("UpdateLobby", (lobby) => {
        cb(lobby);
+       console.log(lobby);
     });
   }
   subscribeForJoinLobby(cb) {
     this.connection.on("JoinLobby", (user) => {
-      	cb(user)
+      	cb(user);
       });
   }
 

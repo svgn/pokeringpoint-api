@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, TextField, FormControl, InputLabel, Select, Button, FormControlLabel, Checkbox, FormHelperText } from '@material-ui/core';
 import HttpRequest from '../rest/httpRequest';
+import LocationHash from '../utils/locationHash';
 
 function JoinRoom({ onJoinClick, onCancelClick }) {
     const [roomId, setRoomId] = useState('');
@@ -21,6 +22,10 @@ function JoinRoom({ onJoinClick, onCancelClick }) {
             onJoinClick({ username, roomId, isObserver });
         }
     }
+    const cancelRoom = () => {
+        LocationHash.clear();
+        onCancelClick();
+    }
     const onRoomIdChange = (e) => {
         if (roomError) {
             setRoomError(false);
@@ -38,6 +43,15 @@ function JoinRoom({ onJoinClick, onCancelClick }) {
         const response = await HttpRequest.getRooms();
         response.unshift({ id: '', value: ''})
         setRooms(response || []);
+
+        if (LocationHash.has()) {
+            const hash = LocationHash.get();
+            const room = response.find(x => x.id === hash);
+            if (room) {
+                setRoomId(room.id);
+            }
+        }
+
     }, []);
 
     return (
@@ -86,7 +100,7 @@ function JoinRoom({ onJoinClick, onCancelClick }) {
                     spacing={3}
                     direction="row">
                     <Grid key={0} item>
-                        <Button variant="contained" color="primary" size="large" onClick={() => onCancelClick()}>
+                        <Button variant="contained" color="primary" size="large" onClick={cancelRoom}>
                             Cancel
                         </Button>
                     </Grid>
