@@ -1,0 +1,74 @@
+@import './player/poker-player.css';
+
+.table-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table-container {
+    display: grid;
+    width: 70vw;
+    height: 60vh;
+    grid-template-columns: 2fr 3fr 2fr;
+    grid-template-rows: 1fr 2fr 1fr;
+    grid-template-areas:
+        "tl    top     tr"
+        "left  table   right"
+        "bl    bottom  br";
+}
+
+
+.table-top,
+.table-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    justify-content: center;
+    border: 1px solid aquamarine;
+}
+
+.table-left,
+.table-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid aquamarine;
+}
+
+.table-top {
+    grid-area: top;
+    align-items: flex-end;
+}
+
+.table-right {
+    grid-area: right;
+    align-items: flex-start;
+}
+
+.table-bottom {
+    grid-area: bottom;
+    align-items: flex-start;
+}
+
+.table-left {
+    grid-area: left;
+    align-items: flex-end;
+}
+
+.table-middle {
+    grid-area: table;
+}
+
+.table-middle__core {
+    width: 100%;
+    height: 100%;
+    border: 10px solid black;
+    border-radius: 35px;
+}
+
+@media only screen and (max-width: 600px) {
+    .table-container {
+        width: 100vw;
+    }
+}

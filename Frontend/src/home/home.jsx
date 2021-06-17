@@ -7,6 +7,7 @@ import HttpRequest from '../rest/httpRequest';
 import ConnectionHub from '../rest/connectionHub.js';
 import Cards from "./cards/Cards";
 import Gamblers from './gamblers/Gamblers';
+import PokerTable from './poker-table/PokerTable';
 
 const initialState = {
     showVotes: false,
@@ -109,7 +110,7 @@ export function Home() {
                     <button onClick={onShowVotesClick}>Show Votes</button>
                     <button onClick={onLeaveRoomClick}>Leave Room</button>
                     <hr/>
-                    {state.userList && <Gamblers items={state.userList} showVotes={showVotes} user={user} />}
+                    {state.userList && <PokerTable players={state.userList} showVotes={showVotes} user={user} />}
                     {user.userType === 1 && <Cards items={state.cards} onSelection={onVoteClick} selectedCard={user.vote} disable={state.showVotes} /> }
                 </div>
             }
