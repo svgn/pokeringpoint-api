@@ -1,8 +1,13 @@
 import { ListItem } from './list-item/list-item.jsx';
 import { useReducer } from 'react';
-import { useEffect } from 'react';
-import ConnectionHub from '../rest/connectionHub.js';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { localStorageService } from '../storage/local-storage.service';
+import { Redirect } from 'react-router-dom';
 import HttpRequest from '../rest/httpRequest';
+import ConnectionHub from '../rest/connectionHub.js';
+import Cards from "./cards/Cards";
+import {VotesStaticList} from "./votes-list";
 
 const initialState = {
     showVotes: false,
@@ -42,65 +47,78 @@ function reducer(state = {}, action = {}) {
     }
 }
 
-export function Home(props) {
+export function Home() {
     const [state, dispatch] = useReducer(reducer, initialState);
+    const [user, setUser] = useState(localStorageService.getLoggedUser());
+    const params = useParams();
+    const roomId = parseInt(params.roomId);
 
     useEffect(() => {
-        HttpRequest.getRoom({ id: props.user.lobbyId}).then(lobby => {
-            const mappedLobby = { ...lobby, userList: lobby.users || [] };
-                dispatch({ type: 'update', payload: mappedLobby });
-            })
-        ConnectionHub.subscribeForUpdateLobby(props.user.lobbyId, (lobby) => {
+        ConnectionHub.subscribeForUpdateLobby(roomId, (lobby) => {
             const mappedLobby = { ...lobby, userList: lobby.users || [] };
             dispatch({ type: 'update', payload: mappedLobby });
         })
-    }, [])
+
+        HttpRequest.getRoom({ id: roomId }).then((lobby) => {
+            const mappedLobby = { ...lobby, userList: lobby.users || [] };
+            dispatch({ type: 'update', payload: mappedLobby });
+    
+            if (user) {
+                const match = lobby?.users.find(u => u.connectionId === user.connectionId);
+                if (!match) {
+                    ConnectionHub.joinLobby(roomId, user.name, user.userType);
+                }
+            }
+        }).catch(() => {
+            clearUser();
+        });
+    }, [roomId, user]);
+
     const onShowVotesClick = (event) => {
         event.preventDefault();
-        dispatch({ type: 'showVotes' });
-        ConnectionHub.showVote(props.user.lobbyId);
+        ConnectionHub.showVote(roomId);
     }
 
     const onClearVotesClick = (event) => {
         event.preventDefault();
-        dispatch({ type: 'clearVotes' });
-        ConnectionHub.clearVote(props.user.lobbyId);
+        ConnectionHub.clearVote(roomId);
     }
 
-    const onVoteClick = (event, vote) => {
-        event.preventDefault();
-        const payload = {
-            connectionId: props.user.connectionId,
-            vote
-        }
-        dispatch({ type: 'vote', payload }) ;
-        ConnectionHub.vote(props.user.lobbyId, vote);
+    const onVoteClick = (card) => {
+        ConnectionHub.vote(roomId, card);
     };
-    const voteButtonsList = state.cards.map(vote => {
-        return (
-            <button key={vote}
-                    onClick={(event) => onVoteClick(event, vote)}>
-                {vote}
-            </button>
-        );}
-    );
+
+    const onLeaveRoomClick = (event) => {
+        event.preventDefault();
+        ConnectionHub.leaveLobby(roomId);
+        clearUser();
+    }
+
+    const clearUser = () => {
+        localStorageService.clearLoggedUser();
+        setUser(null);
+    }
 
     const usersList = state.userList;
     const showVotes = state.showVotes || state.userList.reduce((acc,user) => (acc && user.vote), true);
     const peopleList = usersList.map(person => {
-        const showVote = showVotes || (person.vote && person.connectionId === props.user.connectionId);
+        const showVote = showVotes || (person.vote && person.connectionId === user.connectionId);
         return (<ListItem key={person.connectionId} name={person.name} vote={person.vote} showVote={showVote}></ListItem>);
     });
 
     return (
-        <div className="home-main">
-            <h2>{props.user.name}</h2>
-            <button onClick={onClearVotesClick}>Clear Votes</button>
-            <button onClick={onShowVotesClick}>Show Votes</button>
-            <hr/>
-            <div className="votes">{voteButtonsList}</div>
-            <hr/>
-            <div className="people-list">{peopleList}</div>
-        </div>
+        <>
+            { !user ? <Redirect to='/login' /> :
+                <div className="home-main">
+                    <h2>{user.name}</h2>
+                    <button onClick={onClearVotesClick}>Clear Votes</button>
+                    <button onClick={onShowVotesClick}>Show Votes</button>
+                    <button onClick={onLeaveRoomClick}>Leave Room</button>
+                    <hr/>
+                    <div className="people-list">{peopleList}</div>
+                    {user.userType === 1 && <Cards items={state.cards} onSelection={onVoteClick} selectedCard={user.vote} disable={state.showVotes} /> }
+                </div>
+            }
+        </>
     );
 }

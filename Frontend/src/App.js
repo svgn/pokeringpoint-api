@@ -1,13 +1,18 @@
 import "./App.css";
 import React, { useCallback, useEffect, useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useHistory,
+  Redirect
+} from "react-router-dom";
 import Login from "./login/Login";
 import { Home } from "./home/home.jsx";
-import HttpRequest from "./rest/httpRequest";
-import ConnectionHub from "./rest/connectionHub";
-
 import { ThemeProvider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 import blue from "@material-ui/core/colors/blue";
+import { localStorageService } from "./storage/local-storage.service";
 
 const theme = createMuiTheme({
   palette: {
@@ -21,27 +26,24 @@ const theme = createMuiTheme({
 });
 
 function App() {
-  const [user, setUser] = useState();
-
-  const joinRoom = useCallback(async ({ username, isObserver, roomId }) => {
-    const room = await HttpRequest.getRoom({ id: roomId });
-    const userType = isObserver ? 0 : 1;
-    const user = ConnectionHub.joinLobby(room.id, username, userType);
-  }, []);
-  useEffect(() => {
-    ConnectionHub.subscribeForJoinLobby((user) => { setUser(user); });
-  })
+  const user = localStorageService.getLoggedUser();
 
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-        {!user ? (
-          <Login
-            onJoinRoom={(...args) => joinRoom(...args)}
-          />
-        ) : (
-          <Home user={user}/>
-        )}
+        <Router>
+          <Switch>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/room/:roomId">
+              <Home user={user} />
+            </Route>
+            <Route path="/">
+              <Redirect to="/login" />
+            </Route>
+          </Switch>
+        </Router>
       </ThemeProvider>
     </div>
   );

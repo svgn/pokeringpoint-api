@@ -33,7 +33,7 @@ function CreateRoom({ onCreateClick, onCancelClick }) {
                     error={roomNameError}
                     onChange={onRoomNameChange}
                     placeholder="Room name" />
-                <FormHelperText error={roomNameError}>Enter username.</FormHelperText>
+                <FormHelperText error={roomNameError}>Enter room name.</FormHelperText>
             </Grid>
             <Grid key={1} item>
                 <Grid
