@@ -1,4 +1,3 @@
-import { ListItem } from './list-item/list-item.jsx';
 import { useReducer } from 'react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { Redirect } from 'react-router-dom';
 import HttpRequest from '../rest/httpRequest';
 import ConnectionHub from '../rest/connectionHub.js';
 import Cards from "./cards/Cards";
-import {VotesStaticList} from "./votes-list";
+import Gamblers from './gamblers/Gamblers';
 
 const initialState = {
     showVotes: false,
@@ -74,23 +73,23 @@ export function Home() {
         });
     }, [roomId, user]);
 
-    const onShowVotesClick = (event) => {
+    const onShowVotesClick = async (event) => {
         event.preventDefault();
-        ConnectionHub.showVote(roomId);
+        await ConnectionHub.showVote(roomId);
     }
 
-    const onClearVotesClick = (event) => {
+    const onClearVotesClick = async (event) => {
         event.preventDefault();
-        ConnectionHub.clearVote(roomId);
+        await ConnectionHub.clearVote(roomId);
     }
 
-    const onVoteClick = (card) => {
-        ConnectionHub.vote(roomId, card);
+    const onVoteClick = async (card) => {
+        await ConnectionHub.vote(roomId, card);
     };
 
-    const onLeaveRoomClick = (event) => {
+    const onLeaveRoomClick = async (event) => {
         event.preventDefault();
-        ConnectionHub.leaveLobby(roomId);
+        await ConnectionHub.leaveLobby(roomId);
         clearUser();
     }
 
@@ -99,12 +98,7 @@ export function Home() {
         setUser(null);
     }
 
-    const usersList = state.userList;
     const showVotes = state.showVotes || state.userList.reduce((acc,user) => (acc && user.vote), true);
-    const peopleList = usersList.map(person => {
-        const showVote = showVotes || (person.vote && person.connectionId === user.connectionId);
-        return (<ListItem key={person.connectionId} name={person.name} vote={person.vote} showVote={showVote}></ListItem>);
-    });
 
     return (
         <>
@@ -115,7 +109,7 @@ export function Home() {
                     <button onClick={onShowVotesClick}>Show Votes</button>
                     <button onClick={onLeaveRoomClick}>Leave Room</button>
                     <hr/>
-                    <div className="people-list">{peopleList}</div>
+                    {state.userList && <Gamblers items={state.userList} showVotes={showVotes} user={user} />}
                     {user.userType === 1 && <Cards items={state.cards} onSelection={onVoteClick} selectedCard={user.vote} disable={state.showVotes} /> }
                 </div>
             }

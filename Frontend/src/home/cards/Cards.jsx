@@ -8,7 +8,9 @@ const useStyles = makeStyles(() => ({
         minHeight: 120,
         position: 'absolute',
         bottom: 0,
-        left: 0
+        left: 0,
+        margin: 0,
+        width: '100%'
     },
     paper: {
         height: 70,
@@ -49,6 +51,7 @@ function Cards({ items, onSelection, selectedCard, disable }) {
         <Grid
             className={classes.root}
             container
+            item
             spacing={3}
             justify="center"
             lignItems="center"
