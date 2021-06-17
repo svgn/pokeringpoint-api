@@ -43,11 +43,5 @@ namespace PointingPokerAPI.Controllers
         {
             return Ok(this.lobbyService.CreateLobby(name));
         }
-
-        [HttpGet("isCIworking")]
-        public IActionResult IsCIWorking()
-        {
-            return Ok("yes")
-        }
     }
 }
