@@ -1,0 +1,5 @@
+@import './list-item/list-item.css';
+
+.home-main {
+    max-width: 300px;
+}
