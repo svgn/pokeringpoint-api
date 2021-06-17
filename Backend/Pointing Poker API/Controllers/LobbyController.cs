@@ -47,7 +47,7 @@ namespace PointingPokerAPI.Controllers
         [HttpGet("isCIworking")]
         public IActionResult IsCIWorking()
         {
-            return Ok("yes");
+            return Ok("yes")
         }
     }
 }
