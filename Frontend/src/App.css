@@ -1,6 +1,11 @@
 @import './login/Login.css';
+@import './home/poker-table/poker-table.css';
 
 .App {
     max-width: 80%;
     margin: 0 auto;
+}
+
+* {
+    box-sizing: border-box;
 }

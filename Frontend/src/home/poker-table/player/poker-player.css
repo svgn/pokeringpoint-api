@@ -1,0 +1,23 @@
+
+.poker-player__container {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 10px;
+    border: 1px solid red;
+}
+
+.poker-player__avatar {
+    height: 70px;
+    width: 50px;
+    border: 1px solid blue;
+}
+
+.poker-player__name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    overflow: hidden;
+    font-size: 12px;
+}
