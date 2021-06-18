@@ -1,1 +1,1 @@
-pokeringpoint
+pokeringpoint-api
