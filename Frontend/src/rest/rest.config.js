@@ -1,5 +1,5 @@
 const RestConfig = {
-  url: "https://pokeringpoint.herokuapp.com",
+  url: "https://pokeringpoint-api.herokuapp.com",
 };
 
 export default RestConfig;
