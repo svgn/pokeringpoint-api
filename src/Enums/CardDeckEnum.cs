@@ -11,6 +11,6 @@
         Thirteen = 13,
         Twenty = 20,
         Fourty = 40,
-        Question = 1000
+        Hundred = 100
     }
 }
