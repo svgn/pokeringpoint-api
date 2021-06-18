@@ -33,5 +33,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://pokeringpoint.herokuapp.com"
+  "proxy": "https://pokeringpoint-api.herokuapp.com"
 }
