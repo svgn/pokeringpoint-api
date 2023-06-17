@@ -38,6 +38,8 @@ jobs:
         uses: snyk/actions/dotnet@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --file=./src/PointingPokerAPI.sln
       
   docker:  
     runs-on: ubuntu-latest    
