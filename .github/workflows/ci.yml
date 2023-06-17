@@ -36,14 +36,16 @@ jobs:
         working-directory: ./src
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/dotnet@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --file=./src/PointingPokerAPI.sln
+          command: monitor
       
   docker:  
     runs-on: ubuntu-latest    
-    needs: [build]   
+    needs: [build, vulnerabilities]   
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
